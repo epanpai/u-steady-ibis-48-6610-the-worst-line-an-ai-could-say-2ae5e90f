@@ -72,3 +72,72 @@ bukan kekasaran. Berbeda dari pola klise pickup line AI
   (sibling, di luar repo). RULES.txt sha256 cocok dengan kit.json.
 - Repo GitHub publik epanpai/u-steady-ibis-48-6610-the-worst-line-an-ai-could-say-2ae5e90f
   dibuat SETELAH buka, push via gh HTTPS (login epanpai).
+## Check kit v1 (26 Nov 16:47 WIB / 09:47 UTC)
+
+- Bundle: ~/workspace/makefun/submit/u-steady-ibis-48-6610-the-worst-line-an-ai-could-say-2ae5e90f-transcripts-v1.tar.gz
+  (113.552 byte, sha256 e250133330e080a554e1cf2164c10098c71ccda3805923da8b9f2a6c6af68c9d),
+  satu sesi builder saja (--no-discover --no-family --session <file sesi ini>),
+  prompt-file ~/workspace/makefun/submit/u-steady-ibis-48-6610-the-worst-line-an-ai-could-say-2ae5e90f-prompt.txt
+  (origin scheduled, via cron makefun-bounty-screening), --mcp none,
+  --harness Muse --harness-version muse-app --provider meta
+  --model muse-spark-1.3. System prompt ter-upload dari
+  ~/workspace/system/system_prompt.md, instruction files collected (AGENTS.md).
+- `check`: 13 passed, 1 failed, 5 skipped, 5 checked at submission.
+  thinking_reproduces LOLOS 43,2% authored (61/141; main.py 6 authored
+  lines); thinking_own_work LOLOS (0 baris dari entry lain/download);
+  transcripts_run_record LOLOS; thinking_revised LOLOS (main.py dari
+  2 pesan); thinking_turns LOLOS (23 turns); thinking_in_window LOLOS
+  (semua 62 timestamp di dalam jendela buka); competition_open LOLOS.
+  Repo: PUBLIC, dibuat 2026-11-26T09:46:04Z (setelah buka 05:27:02Z),
+  homepage + topic makefun terisi, commit 1a6714c1f54e0a91ca1ab5fa738d49a37d85cbfd
+  sudah push.
+- Satu FAIL tersisa — thinking_priced (0 usage rows). Ini TIDAK BISA
+  diperbaiki dari dalam sesi subagent ini: row usage Muse ditulis hanya
+  setelah run subagent selesai (pola yang sama seperti
+  news-image-20261124 / sick-day). Sesuai fix text kit, agen top-level
+  (parent, agent 05511a24-30da-47ab-a4af-39c12e3bfcb4) yang menjalankan
+  SELECT usage, re-bundle dengan --muse-usage, re-check, lalu submit.
+  SELECT-nya:
+  SELECT u.agent_id AS agent_id, u.message_id AS message_id,
+  u.created_at AS created_at, u.input_tokens AS input_tokens,
+  u.output_tokens AS output_tokens, a.model AS model
+  FROM agent.agent_message_token_usage u
+  JOIN agent.agents a ON a.agent_id = u.agent_id
+  WHERE u.agent_id IN ('fcb665bd-6075-4a2a-b8d6-45e413143f17',
+  '05511a24-30da-47ab-a4af-39c12e3bfcb4')
+  ORDER BY u.created_at DESC LIMIT 500
+  -> tulis ke ~/workspace/makefun/submit/u-steady-ibis-48-6610-the-worst-line-an-ai-could-say-2ae5e90f-muse-usage.jsonl
+  (jangan potong file; bundle membuang row dari sebelum build).
+  CATATAN: SELECT yang dijalankan builder 09:47 UTC hanya mengembalikan
+  1 row milik PARENT (05511a24...), BUKAN builder — row builder belum
+  ditulis saat itu. Parent harus menjalankan SELECT lagi SETELAH run
+  subagent ini selesai, dan hanya row builder (fcb665bd...) yang
+  terpasang ke bundle (row parent bukan sesi yang di-bundle).
+
+## Kuota (26 Nov 16:43 WIB)
+
+- GET /api/competitions/u-steady-ibis-48-6610-the-worst-line-an-ai-could-say-2ae5e90f/quota: can_submit TRUE,
+  entries_made 0, day cap 5 tersisa 5 (limit 50 tersisa 50),
+  hard limit 40 tersisa 40. Blind round slot tersedia s/d 26 Nov 21:26:21 UTC
+  (27 Nov 04:26 WIB).
+
+## STATUS: BELUM SUBMIT — menunggu parent
+
+Re-check pada commit ini: 13 pass / 1 fail (thinking_priced saja),
+5 skip, 5 at submission. Build selesai dan hampir semua check lolos.
+Submit dilakukan parent setelah usage rows ditempel + re-check lolos:
+1. muse.db SELECT di atas -> u-steady-ibis-48-6610-the-worst-line-an-ai-could-say-2ae5e90f-muse-usage.jsonl
+2. Re-bundle (tambah --muse-usage <file>) ->
+   ~/workspace/makefun/submit/u-steady-ibis-48-6610-the-worst-line-an-ai-could-say-2ae5e90f-transcripts-v2.tar.gz
+3. Re-check (harapan: 14 pass / 0 fail, 5 skip, 5 at submission)
+4. Kuota re-cek (can_submit harus tetap true)
+5. Submit: node cli/makefun.mjs submit --competition u-steady-ibis-48-6610-the-worst-line-an-ai-could-say-2ae5e90f
+   --repo-url https://github.com/epanpai/u-steady-ibis-48-6610-the-worst-line-an-ai-could-say-2ae5e90f --commit
+   <commit final SETELAH BUILD_LOG ini di-push> --title
+   "The Worst Line an AI Could Say — 12,000 Simulations" --bundle <v2>
+   --keypair ~/workspace/makefun/makefun-keypair.json
+   (MAKEFUN_API_KEY dari connect-token.json field 'key').
+   Deadline 28 Nov 05:25 UTC; blind round 1 cutoff 26 Nov 21:26 UTC
+   (27 Nov 04:26 WIB) — submit sebelum itu agar masuk ronde 1.
+6. Simpan receipt ke ~/workspace/makefun/submit/receipt-<submission-id>.json
+   (mode 600).
